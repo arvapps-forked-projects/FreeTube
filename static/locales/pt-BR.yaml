@@ -388,7 +388,7 @@ Settings:
         criar subpastas.
     Enter Fullscreen on Display Rotate: Entrar em tela cheia ao girar a tela para
       o modo paisagem
-    Skip by Scrolling Over Video Player: Ignorar ao rolar sobre o player
+    Skip by Scrolling Over Video Player: Pular vídeo ao rolar sobre o player
     Allow DASH AV1 formats: Permitir formatos DASH AV1
     Comment Auto Load:
       Comment Auto Load: Carregar automaticamente os comentários
@@ -523,7 +523,7 @@ Settings:
     Hide Trending Videos: Ocultar vídeos em alta
     Hide Recommended Videos: Ocultar vídeos recomendados
     Hide Comment Likes: Ocultar "curtidas" em comentários
-    Distraction Free Settings: Configurações de Modo sem Distração
+    Distraction Free Settings: Configurações de distrações
     Hide Channel Subscribers: Ocultar número de inscritos
     Hide Video Likes And Dislikes: Ocultar "curtidas" em vídeo
     Hide Video Views: Ocultar visualizações de vídeo
@@ -622,7 +622,7 @@ Settings:
     Download in app: Baixar no aplicativo
     Download Behavior: Comportamento de download
   Parental Control Settings:
-    Show Family Friendly Only: Mostrar Apenas Amigável à Família
+    Show Family Friendly Only: Mostrar apenas conteúdo recomendado para todas as idades
     Hide Search Bar: Ocultar barra de pesquisa
     Parental Control Settings: Configurações de Controle Parental
     Hide Unsubscribe Button: Ocultar botão de cancelamento de inscrição
@@ -1061,7 +1061,7 @@ Profile:
 Version {versionNumber} is now available!  Click for more details: A versão {versionNumber}
   já está disponível! Clique para mais detalhes
 A new blog is now available, {blogTitle}. Click to view more: 'Um novo blog está disponível,
-  {blogTitle}. Clique para ver mais'
+  {blogTitle}. Clique aqui para saber mais'
 Download From Site: Baixar do site
 The playlist has been reversed: A playlist foi invertida
 This video is unavailable because of missing formats. This can happen due to country unavailability.: Este
