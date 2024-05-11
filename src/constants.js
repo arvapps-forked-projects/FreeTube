@@ -23,7 +23,10 @@ const IpcChannels = {
   SYNC_SETTINGS: 'sync-settings',
   SYNC_HISTORY: 'sync-history',
   SYNC_PROFILES: 'sync-profiles',
-  SYNC_PLAYLISTS: 'sync-playlists'
+  SYNC_PLAYLISTS: 'sync-playlists',
+
+  GET_REPLACE_HTTP_CACHE: 'get-replace-http-cache',
+  TOGGLE_REPLACE_HTTP_CACHE: 'toggle-replace-http-cache'
 }
 
 const DBActions = {
@@ -73,9 +76,13 @@ const SyncEvents = {
 // Utils
 const MAIN_PROFILE_ID = 'allChannels'
 
+// YouTube search character limit is 100 characters
+const SEARCH_CHAR_LIMIT = 100
+
 export {
   IpcChannels,
   DBActions,
   SyncEvents,
-  MAIN_PROFILE_ID
+  MAIN_PROFILE_ID,
+  SEARCH_CHAR_LIMIT
 }

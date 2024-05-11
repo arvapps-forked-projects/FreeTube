@@ -6,7 +6,7 @@ import FtToggleSwitch from '../ft-toggle-switch/ft-toggle-switch.vue'
 import FtSlider from '../ft-slider/ft-slider.vue'
 import FtFlexBox from '../ft-flex-box/ft-flex-box.vue'
 import FtPrompt from '../ft-prompt/ft-prompt.vue'
-import { colors } from '../../helpers/colors'
+import { colors, getColorTranslations } from '../../helpers/colors'
 
 export default defineComponent({
   name: 'ThemeSettings',
@@ -20,14 +20,15 @@ export default defineComponent({
   },
   data: function () {
     return {
+      usingElectron: process.env.IS_ELECTRON,
       minUiScale: 50,
       maxUiScale: 300,
       uiScaleStep: 5,
       disableSmoothScrollingToggleValue: false,
       showRestartPrompt: false,
       restartPromptValues: [
-        'yes',
-        'no'
+        'restart',
+        'cancel'
       ],
       baseThemeValues: [
         'system',
@@ -38,7 +39,9 @@ export default defineComponent({
         'catppuccinMocha',
         'pastelPink',
         'hotPink',
-        'nordic'
+        'nordic',
+        'solarizedDark',
+        'solarizedLight'
       ]
     }
   },
@@ -89,8 +92,8 @@ export default defineComponent({
 
     restartPromptNames: function () {
       return [
-        this.$t('Yes'),
-        this.$t('No')
+        this.$t('Yes, Restart'),
+        this.$t('Cancel')
       ]
     },
 
@@ -104,7 +107,9 @@ export default defineComponent({
         this.$t('Settings.Theme Settings.Base Theme.Catppuccin Mocha'),
         this.$t('Settings.Theme Settings.Base Theme.Pastel Pink'),
         this.$t('Settings.Theme Settings.Base Theme.Hot Pink'),
-        this.$t('Settings.Theme Settings.Base Theme.Nordic')
+        this.$t('Settings.Theme Settings.Base Theme.Nordic'),
+        this.$t('Settings.Theme Settings.Base Theme.Solarized Dark'),
+        this.$t('Settings.Theme Settings.Base Theme.Solarized Light')
       ]
     },
 
@@ -113,19 +118,11 @@ export default defineComponent({
     },
 
     colorNames: function () {
-      return this.colorValues.map(colorVal => {
-        // add spaces before capital letters
-        const colorName = colorVal.replaceAll(/([A-Z])/g, ' $1').trim()
-        return this.$t(`Settings.Theme Settings.Main Color Theme.${colorName}`)
-      })
+      return getColorTranslations()
     },
 
     areColorThemesEnabled: function() {
       return this.baseTheme !== 'hotPink'
-    },
-
-    usingElectron: function () {
-      return process.env.IS_ELECTRON
     }
   },
   mounted: function () {
@@ -148,17 +145,19 @@ export default defineComponent({
     handleSmoothScrolling: function (value) {
       this.showRestartPrompt = false
 
-      if (value === null || value === 'no') {
+      if (value === null || value === 'cancel') {
         this.disableSmoothScrollingToggleValue = !this.disableSmoothScrollingToggleValue
         return
       }
 
-      this.updateDisableSmoothScrolling(
-        this.disableSmoothScrollingToggleValue
-      ).then(() => {
-        const { ipcRenderer } = require('electron')
-        ipcRenderer.send('relaunchRequest')
-      })
+      if (process.env.IS_ELECTRON) {
+        this.updateDisableSmoothScrolling(
+          this.disableSmoothScrollingToggleValue
+        ).then(() => {
+          const { ipcRenderer } = require('electron')
+          ipcRenderer.send('relaunchRequest')
+        })
+      }
     },
 
     ...mapActions([

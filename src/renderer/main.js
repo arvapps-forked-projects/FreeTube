@@ -8,12 +8,16 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 
 import { register as registerSwiper } from 'swiper/element'
 
+import { ObserveVisibility } from 'vue-observe-visibility'
+
 // Please keep the list of constants sorted by name
 // to avoid code conflict and duplicate entries
 import {
   faAngleDown,
   faAngleUp,
   faArrowDown,
+  faArrowDownShortWide,
+  faArrowDownWideShort,
   faArrowLeft,
   faArrowRight,
   faArrowUp,
@@ -37,20 +41,29 @@ import {
   faEye,
   faEyeSlash,
   faFileDownload,
+  faFileImage,
   faFileVideo,
   faFilter,
   faFire,
+  faForward,
+  faGauge,
   faGlobe,
+  faGrip,
   faHashtag,
   faHeart,
   faHistory,
+  faImages,
   faInfoCircle,
   faLanguage,
   faLink,
   faLinkSlash,
   faList,
+  faLocationDot,
+  faMicrochip,
   faNewspaper,
+  faPalette,
   faPause,
+  faPhotoFilm,
   faPlay,
   faPlus,
   faQuestionCircle,
@@ -60,10 +73,12 @@ import {
   faSatelliteDish,
   faSave,
   faSearch,
+  faServer,
   faShareAlt,
   faSlidersH,
+  faSortAlphaDown,
+  faSortAlphaDownAlt,
   faSortDown,
-  faStar,
   faStepBackward,
   faStepForward,
   faSync,
@@ -82,6 +97,7 @@ import {
   faMonero
 } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import PortalVue from 'portal-vue'
 
 Vue.config.devtools = process.env.NODE_ENV === 'development'
 Vue.config.performance = process.env.NODE_ENV === 'development'
@@ -94,6 +110,8 @@ library.add(
   faAngleDown,
   faAngleUp,
   faArrowDown,
+  faArrowDownShortWide,
+  faArrowDownWideShort,
   faArrowLeft,
   faArrowRight,
   faArrowUp,
@@ -117,22 +135,32 @@ library.add(
   faEye,
   faEyeSlash,
   faFileDownload,
+  faFileImage,
   faFileVideo,
   faFilter,
   faFire,
+  faForward,
+  faGauge,
   faGlobe,
+  faGrip,
   faHashtag,
   faHeart,
   faHistory,
+  faImages,
   faInfoCircle,
   faLanguage,
   faLink,
   faLinkSlash,
   faList,
+  faLocationDot,
+  faMicrochip,
   faNewspaper,
+  faPalette,
   faPause,
+  faPhotoFilm,
   faPlay,
   faPlus,
+  faPhotoFilm,
   faQuestionCircle,
   faRandom,
   faRetweet,
@@ -140,10 +168,12 @@ library.add(
   faSatelliteDish,
   faSave,
   faSearch,
+  faServer,
   faShareAlt,
   faSlidersH,
+  faSortAlphaDown,
+  faSortAlphaDownAlt,
   faSortDown,
-  faStar,
   faStepBackward,
   faStepForward,
   faSync,
@@ -165,6 +195,7 @@ library.add(
 registerSwiper()
 
 Vue.component('FontAwesomeIcon', FontAwesomeIcon)
+Vue.directive('observe-visibility', ObserveVisibility)
 
 /* eslint-disable-next-line no-new */
 new Vue({
@@ -174,6 +205,7 @@ new Vue({
   i18n,
   render: h => h(App)
 })
+Vue.use(PortalVue)
 
 // to avoid accessing electron api from web app build
 if (process.env.IS_ELECTRON) {

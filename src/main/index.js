@@ -7,11 +7,18 @@ import path from 'path'
 import cp from 'child_process'
 
 import { IpcChannels, DBActions, SyncEvents } from '../constants'
-import baseHandlers from '../datastores/handlers/base'
+import * as baseHandlers from '../datastores/handlers/base'
 import { extractExpiryTimestamp, ImageCache } from './ImageCache'
 import { existsSync } from 'fs'
+import asyncFs from 'fs/promises'
+import { promisify } from 'util'
+import { brotliDecompress } from 'zlib'
+
+import contextMenu from 'electron-context-menu'
 
 import packageDetails from '../../package.json'
+
+const brotliDecompressAsync = promisify(brotliDecompress)
 
 if (process.argv.includes('--version')) {
   app.exit()
@@ -20,7 +27,25 @@ if (process.argv.includes('--version')) {
 }
 
 function runApp() {
-  require('electron-context-menu')({
+  /** @type {Set<string>} */
+  let ALLOWED_RENDERER_FILES
+
+  if (process.env.NODE_ENV === 'production') {
+    // __FREETUBE_ALLOWED_PATHS__ is replaced by the injectAllowedPaths.mjs script
+    // eslint-disable-next-line no-undef
+    ALLOWED_RENDERER_FILES = new Set(__FREETUBE_ALLOWED_PATHS__)
+
+    protocol.registerSchemesAsPrivileged([{
+      scheme: 'app',
+      privileges: {
+        standard: true,
+        secure: true,
+        supportFetchAPI: true
+      }
+    }])
+  }
+
+  contextMenu({
     showSearchWithGoogle: false,
     showSaveImageAs: true,
     showCopyImageAddress: true,
@@ -174,14 +199,11 @@ function runApp() {
     app.commandLine.appendSwitch('enable-features', 'VaapiVideoDecodeLinuxGL')
   }
 
-  // Work around for context menus in the devtools being displayed behind the window
-  // https://github.com/electron/electron/issues/38790
-  app.commandLine.appendSwitch('disable-features', 'WidgetLayering')
-
   // command line switches need to be added before the app ready event first
   // that means we can't use the normal settings system as that is asynchronous,
   // doing it synchronously ensures that we add it before the event fires
-  const replaceHttpCache = existsSync(`${app.getPath('userData')}/experiment-replace-http-cache`)
+  const REPLACE_HTTP_CACHE_PATH = `${app.getPath('userData')}/experiment-replace-http-cache`
+  const replaceHttpCache = existsSync(REPLACE_HTTP_CACHE_PATH)
   if (replaceHttpCache) {
     // the http cache causes excessive disk usage during video playback
     // we've got a custom image cache to make up for disabling the http cache
@@ -224,6 +246,74 @@ function runApp() {
   }
 
   app.on('ready', async (_, __) => {
+    if (process.env.NODE_ENV === 'production') {
+      protocol.handle('app', async (request) => {
+        if (request.method !== 'GET') {
+          return new Response(null, {
+            status: 405,
+            headers: {
+              Allow: 'GET'
+            }
+          })
+        }
+
+        const { host, pathname } = new URL(request.url)
+
+        if (host !== 'bundle' || !ALLOWED_RENDERER_FILES.has(pathname)) {
+          return new Response(null, {
+            status: 400
+          })
+        }
+
+        const contents = await asyncFs.readFile(path.join(__dirname, pathname))
+
+        if (pathname.endsWith('.json.br')) {
+          const decompressed = await brotliDecompressAsync(contents)
+
+          return new Response(decompressed.buffer, {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Encoding': 'br'
+            }
+          })
+        } else {
+          return new Response(contents.buffer, {
+            status: 200,
+            headers: {
+              'Content-Type': contentTypeFromFileExtension(pathname.split('.').at(-1))
+            }
+          })
+        }
+      })
+    }
+
+    // Electron defaults to approving all permission checks and permission requests.
+    // FreeTube only needs a few permissions, so we reject requests for other permissions
+    // and reject all requests on non-FreeTube URLs.
+    //
+    // FreeTube needs the following permissions:
+    // - "fullscreen": So that the video player can enter full screen
+    // - "clipboard-sanitized-write": To allow the user to copy video URLs and error messages
+
+    session.defaultSession.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
+      if (!isFreeTubeUrl(requestingOrigin)) {
+        return false
+      }
+
+      return permission === 'fullscreen' || permission === 'clipboard-sanitized-write'
+    })
+
+    session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+      if (!isFreeTubeUrl(webContents.getURL())) {
+        // eslint-disable-next-line n/no-callback-literal
+        callback(false)
+        return
+      }
+
+      callback(permission === 'fullscreen' || permission === 'clipboard-sanitized-write')
+    })
+
     let docArray
     try {
       docArray = await baseHandlers.settings._findAppReadyRelatedSettings()
@@ -457,6 +547,47 @@ function runApp() {
     }
   })
 
+  /**
+   * @param {string} extension
+   */
+  function contentTypeFromFileExtension(extension) {
+    switch (extension) {
+      case 'html':
+        return 'text/html'
+      case 'css':
+        return 'text/css'
+      case 'js':
+        return 'text/javascript'
+      case 'ttf':
+        return 'font/ttf'
+      case 'woff':
+        return 'font/woff'
+      case 'svg':
+        return 'image/svg+xml'
+      case 'png':
+        return 'image/png'
+      case 'json':
+        return 'application/json'
+      case 'txt':
+        return 'text/plain'
+      default:
+        return 'application/octet-stream'
+    }
+  }
+
+  /**
+   * @param {string} urlString
+   */
+  function isFreeTubeUrl(urlString) {
+    const { protocol, host, pathname } = new URL(urlString)
+
+    if (process.env.NODE_ENV === 'development') {
+      return protocol === 'http:' && host === 'localhost:9080' && (pathname === '/' || pathname === '/index.html')
+    } else {
+      return protocol === 'app:' && host === 'bundle' && pathname === '/index.html'
+    }
+  }
+
   async function installDevTools() {
     try {
       /* eslint-disable */
@@ -497,6 +628,10 @@ function runApp() {
           return '#de1c85'
         case 'nordic':
           return '#2b2f3a'
+        case 'solarized-dark':
+          return '#002B36'
+        case 'solarized-light':
+          return '#fdf6e3'
         case 'system':
         default:
           return nativeTheme.shouldUseDarkColors ? '#212121' : '#f1f1f1'
@@ -607,8 +742,7 @@ function runApp() {
       if (windowStartupUrl != null) {
         newWindow.loadURL(windowStartupUrl)
       } else {
-        /* eslint-disable-next-line n/no-path-concat */
-        newWindow.loadFile(`${__dirname}/index.html`)
+        newWindow.loadURL('app://bundle/index.html')
       }
     }
 
@@ -666,7 +800,7 @@ function runApp() {
     }
   })
 
-  ipcMain.once('relaunchRequest', () => {
+  function relaunch() {
     if (process.env.NODE_ENV === 'development') {
       app.exit(parseInt(process.env.FREETUBE_RELAUNCH_EXIT_CODE))
       return
@@ -697,6 +831,10 @@ function runApp() {
     }
 
     app.quit()
+  }
+
+  ipcMain.once('relaunchRequest', () => {
+    relaunch()
   })
 
   nativeTheme.on('updated', () => {
@@ -782,6 +920,22 @@ function runApp() {
   ipcMain.on(IpcChannels.OPEN_IN_EXTERNAL_PLAYER, (_, payload) => {
     const child = cp.spawn(payload.executable, payload.args, { detached: true, stdio: 'ignore' })
     child.unref()
+  })
+
+  ipcMain.handle(IpcChannels.GET_REPLACE_HTTP_CACHE, () => {
+    return replaceHttpCache
+  })
+
+  ipcMain.once(IpcChannels.TOGGLE_REPLACE_HTTP_CACHE, async () => {
+    if (replaceHttpCache) {
+      await asyncFs.rm(REPLACE_HTTP_CACHE_PATH)
+    } else {
+      // create an empty file
+      const handle = await asyncFs.open(REPLACE_HTTP_CACHE_PATH, 'w')
+      await handle.close()
+    }
+
+    relaunch()
   })
 
   // ************************************************* //

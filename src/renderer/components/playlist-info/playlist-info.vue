@@ -39,6 +39,7 @@
         :show-label="false"
         :value="newTitle"
         @input="(input) => (newTitle = input)"
+        @keydown.enter.native="savePlaylistInfo"
       />
       <h2
         v-else
@@ -66,6 +67,7 @@
       :show-label="false"
       :value="newDescription"
       @input="(input) => newDescription = input"
+      @keydown.enter.native="savePlaylistInfo"
     />
     <p
       v-else
@@ -76,7 +78,6 @@
     <hr>
 
     <div
-      v-if="!searchVideoMode"
       class="channelShareWrapper"
     >
       <router-link
@@ -107,14 +108,6 @@
       </div>
 
       <div class="playlistOptions">
-        <ft-icon-button
-          v-if="searchVideoModeAllowed && videoCount > 0 && !editMode"
-          ref="enableSearchModeButton"
-          :title="$t('User Playlists.SinglePlaylistView.Search for Videos')"
-          :icon="['fas', 'search']"
-          theme="secondary"
-          @click="enableVideoSearchMode"
-        />
         <ft-icon-button
           v-if="editMode"
           :title="$t('User Playlists.Save Changes')"
@@ -162,14 +155,14 @@
           v-if="!editMode && isUserPlaylist && videoCount > 0"
           :title="$t('User Playlists.Remove Watched Videos')"
           :icon="['fas', 'eye-slash']"
-          theme="primary"
+          theme="destructive"
           @click="showRemoveVideosOnWatchPrompt = true"
         />
         <ft-icon-button
           v-if="deletePlaylistButtonVisible"
           :title="$t('User Playlists.Delete Playlist')"
           :icon="['fas', 'trash']"
-          theme="primary"
+          theme="destructive"
           @click="showDeletePlaylistPrompt = true"
         />
         <ft-share-button
@@ -186,6 +179,7 @@
         :label="$t('User Playlists.Are you sure you want to delete this playlist? This cannot be undone')"
         :option-names="deletePlaylistPromptNames"
         :option-values="deletePlaylistPromptValues"
+        :is-first-option-destructive="true"
         @click="handleDeletePlaylistPromptAnswer"
       />
       <ft-prompt
@@ -193,12 +187,13 @@
         :label="$t('User Playlists.Are you sure you want to remove all watched videos from this playlist? This cannot be undone')"
         :option-names="deletePlaylistPromptNames"
         :option-values="deletePlaylistPromptValues"
+        :is-first-option-destructive="true"
         @click="handleRemoveVideosOnWatchPromptAnswer"
       />
     </div>
 
     <div
-      v-if="searchVideoModeAllowed && searchVideoMode"
+      v-if="searchVideoModeAllowed"
       class="searchInputsRow"
     >
       <ft-input
@@ -210,12 +205,6 @@
         :value="query"
         @input="(input) => updateQueryDebounce(input)"
         @clear="updateQueryDebounce('')"
-      />
-      <ft-icon-button
-        :title="$t('User Playlists.Cancel')"
-        :icon="['fas', 'times']"
-        theme="secondary"
-        @click="disableVideoSearchMode"
       />
     </div>
   </div>

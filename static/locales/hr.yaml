@@ -1,6 +1,5 @@
 # Put the name of your locale in the same language
 Locale Name: 'Hrvatski'
-FreeTube: 'FreeTube'
 # Currently on Subscriptions, Playlists, and History
 'This part of the app is not ready yet. Come back later when progress has been made.': >-
   Ovaj dio programa još nije gotov. Navrati kasnije.
@@ -122,7 +121,7 @@ User Playlists:
   Playlist Message: Ova stranica ne odražava potpuno funkcionalne zbirke. Prikazuje
     samo spremljena ili označena videa. Kad posao završi, sva trenutačno ovdje prisutna
     videa premjestit će se u zbirku „Favoriti”.
-  Search bar placeholder: Pretraži zbirku
+  Search bar placeholder: Traži zbirke
   Empty Search Message: U ovoj zbirci nema videa koji odgovaraju tvojem pretraživanju
   This playlist currently has no videos.: Ova zbirka trenutačno nema nijedan video.
   Create New Playlist: Stvori novu zbirku
@@ -183,6 +182,7 @@ User Playlists:
       This playlist is now used for quick bookmark instead of {oldPlaylistName}. Click here to undo: Ova
         se zbirka sada koristi za brze zabilješke umjesto zbirke {oldPlaylistName}.
         Pritisni ovdje za poništavanje
+    Search for Videos: Traži videa
   AddVideoPrompt:
     N playlists selected: 'Odabrano: {playlistCount}'
     Search in Playlists: Traži u zbirkama
@@ -210,6 +210,7 @@ User Playlists:
   Remove from Favorites: Ukloni iz zbirke {playlistName}
   Enable Quick Bookmark With This Playlist: Aktiviraj brze zabilješke s ovom zbirkom
   Disable Quick Bookmark: Deaktiviraj brze zabilješke
+  Playlists with Matching Videos: Zbirke s poklapajućim videima
 History:
   # On History Page
   History: 'Povijest'
@@ -250,7 +251,7 @@ Settings:
         #! List countries
     Check for Latest Blog Posts: Traži najnovije objave na blogu
     Check for Updates: Traži nove verzije
-    View all Invidious instance information: Prikaži podatke svih Invidious primjeraka
+    View all Invidious instance information: Pogledaj podatke svih Invidious instanci
     System Default: Standard sustava
     Clear Default Instance: Izbriši standardnu instancu
     Set Current Instance as Default: Postavi trenutačnu instancu kao standardnu
@@ -265,6 +266,9 @@ Settings:
       Ask Before Opening Link: Pitaj prije otvaranja poveznice
       Open Link: Otvori poveznicu
       External Link Handling: Rukovanje vanjskim poveznicama
+    Auto Load Next Page:
+      Label: Automatski učitaj sljedeću stranicu
+      Tooltip: Automatski učitaj dodatne stranice i komentare.
   Theme Settings:
     Theme Settings: 'Postavke teme'
     Match Top Bar with Main Color: 'Koristi glavnu boju u gornjoj traci'
@@ -382,8 +386,6 @@ Settings:
       ekrana
     Skip by Scrolling Over Video Player: Preskoči pomicanjem preko video playera
     Allow DASH AV1 formats: Dozvoli DASH AV1 formate
-    Comment Auto Load:
-      Comment Auto Load: Automatski učitaj komentare
   Privacy Settings:
     Privacy Settings: 'Postavke privatnosti'
     Remember History: 'Zapamti povijest'
@@ -399,9 +401,7 @@ Settings:
     Are you sure you want to remove all subscriptions and profiles?  This cannot be undone.: Stvarno
       želiš ukloniti sve pretplate i profile? Ovo je nepovratna radnja.
     Remove All Subscriptions / Profiles: Ukloni sve pretplate/profile
-    Automatically Remove Video Meta Files: Automatski ukloni datoteke metapodataka
-      videa
-    Save Watched Videos With Last Viewed Playlist: Spremi gledana videa sa zadnjim
+    Save Watched Videos With Last Viewed Playlist: Spremi gledana videa sa zadnjom
       gledanom zbirkom
     Remove All Playlists: Ukloni sve zbirke
     All playlists have been removed: Sve zbirke su uklonjene
@@ -624,6 +624,7 @@ Settings:
     Remove Password: Ukloni lozinku
     Set Password To Prevent Access: Postavi lozinku za sprečavanja pristupa postavkama
   Expand All Settings Sections: Rasklopi sve odjeljke postavki
+  Sort Settings Sections (A-Z): Razvrstaj odjeljke postavki (A-Z)
 About:
   #On About page
   About: 'Informacije'
@@ -778,7 +779,7 @@ Channel:
   This channel does not exist: Ovaj kanal ne postoji
   This channel does not allow searching: Ovaj kanal ne dozvoljava pretraživanje
   This channel is age-restricted and currently cannot be viewed in FreeTube.: Ovaj
-    kanal je dobno ograničen i trenutačno se ne može gledati na FreeTubeu.
+    je kanal dobno ograničen i trenutačno se ne može gledati na FreeTubeu.
   Live:
     Live: Uživo
     This channel does not currently have any live streams: Ovaj kanal trenutačno nema
@@ -811,7 +812,7 @@ Video:
   Copy YouTube Embedded Player Link: 'Kopiraj poveznicu na ugrađeni YouTube player'
   Open in Invidious: 'Otvori na Invidious stranici'
   Copy Invidious Link: 'Kopiraj poveznicu na Invidious'
-  Views: 'gledanja'
+  Views: 'Gledanja'
   Watched: 'Pogledano'
   # As in a Live Video
   Live: 'Uživo'
@@ -956,14 +957,23 @@ Playlist:
   #& About
   View Full Playlist: 'Pogledaj cijelu zbirku'
   Videos: 'Videa'
-  View: 'Pogled'
-  Views: 'Pogledi'
+  View: 'Prikaz'
+  Views: 'Prikazi'
   Last Updated On: 'Zadnje aktualiziranje'
 
 # On Video Watch Page
 #* Published
 #& Views
   Playlist: Zbirka
+  Sort By:
+    Sort By: Redoslijed
+    DateAddedNewest: Najprije najnovije dodane
+    DateAddedOldest: Najprije najstarije dodane
+    AuthorAscending: Autor (A-Z)
+    AuthorDescending: Autor (Z-A)
+    VideoTitleAscending: Naslov (A-Z)
+    VideoTitleDescending: Naslov (Z-A)
+    Custom: Prilagođeno
 Toggle Theatre Mode: 'Uključi/isključi kazališni modus'
 Change Format:
   Change Media Formats: 'Promijeni videoformate'
@@ -1093,10 +1103,6 @@ Tooltips:
       ili stanja „uživo”
     Fetch Automatically: Kada je aktivirano, FreeTube će automatski dohvatiti feed
       tvoje pretplate kada se otvori novi prozor i prilikom mijenjanja profila.
-  Privacy Settings:
-    Remove Video Meta Files: Kada je aktivirano, FreeTube automatski uklanja datoteke
-      metapodataka koji su stvoreni tijekom reprodukcije videa, kad se zatvori stranica
-      gledanja.
   External Player Settings:
     External Player: Biranjem vanjskog playera prikazat će se ikona, za otvaranje
       videa (zbirka, ako je podržana) u vanjskom playeru, na minijaturi. Upozorenje,
@@ -1189,3 +1195,13 @@ Age Restricted:
   This channel is age restricted: Ovaj je dobno ograničeni kanal
   This video is age restricted: Ovaj je dobno ograničeni video
 Close Banner: Zatvori natpis
+Display Label: '{label}: {value}'
+checkmark: ✓
+Feed:
+  Feed Last Updated: 'Zadnje aktualiziranje feeda {feedName}: {date}'
+  Refresh Feed: Aktualiziraj {subscriptionName}
+Moments Ago: nedavno
+Yes, Delete: Da, izbriši
+Yes, Open Link: Da, otvori poveznicu
+Cancel: Odustani
+Yes, Restart: Da, pokreni ponovo

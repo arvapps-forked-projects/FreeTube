@@ -1,7 +1,5 @@
 <template>
-  <div
-    ref="search"
-  >
+  <div>
     <ft-loader
       v-if="isLoading && !errorMessage"
       :fullscreen="true"
@@ -206,6 +204,7 @@
 
           <ft-input
             v-if="showSearchBar"
+            ref="channelSearchBar"
             :placeholder="$t('Channel.Search Channel')"
             :show-clear-text-button="true"
             class="channelSearch"
@@ -233,28 +232,31 @@
         <ft-select
           v-if="showVideoSortBy"
           v-show="currentTab === 'videos' && latestVideos.length > 0"
-          :value="videoLiveSelectValues[0]"
-          :select-names="videoLiveSelectNames"
-          :select-values="videoLiveSelectValues"
+          :value="videoLiveShortSelectValues[0]"
+          :select-names="videoLiveShortSelectNames"
+          :select-values="videoLiveShortSelectValues"
           :placeholder="$t('Search Filters.Sort By.Sort By')"
+          :icon="getIconForSortPreference(videoSortBy)"
           @change="videoSortBy = $event"
         />
         <ft-select
           v-if="!hideChannelShorts && showShortSortBy"
           v-show="currentTab === 'shorts' && latestShorts.length > 0"
-          :value="shortSelectValues[0]"
-          :select-names="shortSelectNames"
-          :select-values="shortSelectValues"
+          :value="videoLiveShortSelectValues[0]"
+          :select-names="videoLiveShortSelectNames"
+          :select-values="videoLiveShortSelectValues"
           :placeholder="$t('Search Filters.Sort By.Sort By')"
+          :icon="getIconForSortPreference(shortSortBy)"
           @change="shortSortBy = $event"
         />
         <ft-select
           v-if="!hideLiveStreams && showLiveSortBy"
           v-show="currentTab === 'live' && latestLive.length > 0"
-          :value="videoLiveSelectValues[0]"
-          :select-names="videoLiveSelectNames"
-          :select-values="videoLiveSelectValues"
+          :value="videoLiveShortSelectValues[0]"
+          :select-names="videoLiveShortSelectNames"
+          :select-values="videoLiveShortSelectValues"
           :placeholder="$t('Search Filters.Sort By.Sort By')"
+          :icon="getIconForSortPreference(liveSortBy)"
           @change="liveSortBy = $event"
         />
         <ft-select
@@ -264,6 +266,7 @@
           :select-names="playlistSelectNames"
           :select-values="playlistSelectValues"
           :placeholder="$t('Search Filters.Sort By.Sort By')"
+          :icon="getIconForSortPreference(playlistSortBy)"
           @change="playlistSortBy = $event"
         />
       </div>
@@ -368,6 +371,7 @@
         <ft-element-list
           v-if="!hideChannelCommunity && currentTab === 'community'"
           id="communityPanel"
+          class="communityPanel"
           :data="latestCommunityPosts"
           :use-channels-hidden-preference="false"
           role="tabpanel"
@@ -393,17 +397,21 @@
             {{ $t("Channel.Your search results have returned 0 results") }}
           </p>
         </ft-flex-box>
-        <div
+        <ft-auto-load-next-page-wrapper
           v-if="showFetchMoreButton"
-          class="getNextPage"
-          role="button"
-          tabindex="0"
-          @click="handleFetchMore"
-          @keydown.space.prevent="handleFetchMore"
-          @keydown.enter.prevent="handleFetchMore"
+          @load-next-page="handleFetchMore"
         >
-          <font-awesome-icon :icon="['fas', 'search']" /> {{ $t("Search Filters.Fetch more results") }}
-        </div>
+          <div
+            class="getNextPage"
+            role="button"
+            tabindex="0"
+            @click="handleFetchMore"
+            @keydown.space.prevent="handleFetchMore"
+            @keydown.enter.prevent="handleFetchMore"
+          >
+            <font-awesome-icon :icon="['fas', 'search']" /> {{ $t("Search Filters.Fetch more results") }}
+          </div>
+        </ft-auto-load-next-page-wrapper>
       </div>
     </ft-card>
     <ft-card

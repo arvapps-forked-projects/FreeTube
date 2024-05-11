@@ -7,7 +7,8 @@
       :icon="icon"
       :class="{
         [theme]: true,
-        shadow: useShadow
+        shadow: useShadow,
+        disabled
       }"
       :style="{
         padding: padding + 'px',
@@ -66,6 +67,7 @@
           top: dropdownPositionY === 'top'
         }"
         @focusout="handleDropdownFocusOut"
+        @keydown.esc.stop="handleDropdownEscape"
       >
         <slot>
           <ul

@@ -80,10 +80,12 @@ export default defineComponent({
       default: false,
     }
   },
+  emits: ['move-video-down', 'move-video-up', 'pause-player', 'remove-from-playlist'],
   data: function () {
     return {
       visible: false,
-      show: true
+      show: true,
+      stopWatchingInitialVisibleState: null
     }
   },
   computed: {
@@ -111,14 +113,42 @@ export default defineComponent({
   },
   created() {
     this.visible = this.initialVisibleState
+
+    if (!this.initialVisibleState) {
+      this.stopWatchingInitialVisibleState = this.$watch('initialVisibleState', (newValue) => {
+        this.visible = newValue
+        this.stopWatchingInitialVisibleState()
+        this.stopWatchingInitialVisibleState = null
+      })
+    }
   },
   methods: {
     onVisibilityChanged: function (visible) {
       if (visible && this.shouldBeVisible) {
         this.visible = visible
+        if (this.stopWatchingInitialVisibleState) {
+          this.stopWatchingInitialVisibleState()
+          this.stopWatchingInitialVisibleState = null
+        }
       } else if (visible) {
         this.show = false
+        if (this.stopWatchingInitialVisibleState) {
+          this.stopWatchingInitialVisibleState()
+          this.stopWatchingInitialVisibleState = null
+        }
       }
+    },
+    pausePlayer: function () {
+      this.$emit('pause-player')
+    },
+    moveVideoUp: function () {
+      this.$emit('move-video-up')
+    },
+    moveVideoDown: function () {
+      this.$emit('move-video-down')
+    },
+    removeFromPlaylist: function () {
+      this.$emit('remove-from-playlist')
     }
   }
 })

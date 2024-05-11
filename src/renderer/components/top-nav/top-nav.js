@@ -1,12 +1,12 @@
 import { defineComponent } from 'vue'
 import { mapActions } from 'vuex'
 import FtInput from '../ft-input/ft-input.vue'
-import FtSearchFilters from '../ft-search-filters/ft-search-filters.vue'
 import FtProfileSelector from '../ft-profile-selector/ft-profile-selector.vue'
 import debounce from 'lodash.debounce'
 
 import { IpcChannels } from '../../../constants'
 import { openInternalPath } from '../../helpers/utils'
+import { translateWindowTitle } from '../../helpers/strings'
 import { clearLocalSearchSuggestionsSession, getLocalSearchSuggestions } from '../../helpers/api/local'
 import { invidiousAPICall } from '../../helpers/api/invidious'
 
@@ -14,15 +14,12 @@ export default defineComponent({
   name: 'TopNav',
   components: {
     FtInput,
-    FtSearchFilters,
     FtProfileSelector
   },
   data: () => {
     return {
       component: this,
       showSearchContainer: true,
-      showFilters: false,
-      searchFilterValueChanged: false,
       historyIndex: 1,
       isForwardOrBack: false,
       isArrowBackwardDisabled: true,
@@ -47,9 +44,10 @@ export default defineComponent({
     headerLogoTitle: function () {
       return this.$t('Go to page',
         {
-          page: this.$t(this.$router.getRoutes()
+          page: translateWindowTitle(this.$router.getRoutes()
             .find((route) => route.path === '/' + this.landingPage)
-            .meta.title
+            .meta.title,
+          this.$i18n
           )
         })
     },
@@ -80,6 +78,10 @@ export default defineComponent({
 
     expandSideBar: function () {
       return this.$store.getters.getExpandSideBar
+    },
+
+    searchFilterValueChanged: function () {
+      return this.$store.getters.getSearchFilterValueChanged
     },
 
     forwardText: function () {
@@ -214,9 +216,6 @@ export default defineComponent({
           }
         }
       })
-
-      // Close the filter panel
-      this.showFilters = false
     },
 
     focusSearch: function () {
@@ -282,7 +281,7 @@ export default defineComponent({
         this.searchSuggestionsDataList = results.suggestions
       }).catch((err) => {
         console.error(err)
-        if (process.env.IS_ELECTRON && this.backendFallback) {
+        if (process.env.SUPPORTS_LOCAL_API && this.backendFallback) {
           console.error(
             'Error gettings search suggestions.  Falling back to Local API'
           )
@@ -293,11 +292,6 @@ export default defineComponent({
 
     toggleSearchContainer: function () {
       this.showSearchContainer = !this.showSearchContainer
-      this.showFilters = false
-    },
-
-    handleSearchFilterValueChanged: function (filterValueChanged) {
-      this.searchFilterValueChanged = filterValueChanged
     },
 
     navigateHistory: function () {
@@ -352,14 +346,12 @@ export default defineComponent({
     navigate: function (route) {
       this.$router.push('/' + route)
     },
-    hideFilters: function () {
-      this.showFilters = false
-    },
     updateSearchInputText: function (text) {
       this.$refs.searchInput.updateInputData(text)
     },
     ...mapActions([
       'getYoutubeUrlInfo',
+      'showSearchFilters'
     ])
   }
 })

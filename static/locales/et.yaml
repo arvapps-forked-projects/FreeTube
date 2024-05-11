@@ -1,6 +1,5 @@
 # Put the name of your locale in the same language
 Locale Name: 'eesti keel'
-FreeTube: 'FreeTube'
 # Currently on Subscriptions, Playlists, and History
 'This part of the app is not ready yet. Come back later when progress has been made.': >-
   Rakenduse see osa pole veel valmis. Tule hiljem tagasi, kui arendustööd on valmis.
@@ -127,7 +126,7 @@ User Playlists:
   Playlist Message: See leht ei kirjelda terviklikke ja toimivad esitusloendeid. Siin
     on kirjas vaid videod, mida oled salvestanud või mille oled märkinud lemmikuks.
     Kui kõik on valmis, siis siin nähtavad videod on leitavad esitusloendist „Lemmikud“.
-  Search bar placeholder: Otsi esindusloendist
+  Search bar placeholder: Otsi esindusloendeid
   Empty Search Message: Selles esitusloendis pole sinu otsingule vastavaid videosid
   Are you sure you want to remove all watched videos from this playlist? This cannot be undone: Kas
     sa oled kindel, et soovid kõik vaadatud videod sellest esitusloendist eemaldada?
@@ -219,6 +218,7 @@ User Playlists:
   Remove from Favorites: Eemalda esitusloendist {playlistName}
   Enable Quick Bookmark With This Playlist: Võimalda kiirjärjehoidjate kasutamist
     selle esitusloendiga
+  Playlists with Matching Videos: Sobivate videotega esitusloendid
 History:
   # On History Page
   History: 'Ajalugu'
@@ -244,7 +244,7 @@ Settings:
       Invidious API: 'API Invidious''e veebirakenduses'
     Video View Type:
       Video View Type: 'Kasutatav videote vaade'
-      Grid: 'Võrgustik'
+      Grid: 'Ruudustik'
       List: 'Loend'
     Thumbnail Preference:
       Thumbnail Preference: 'Pisipiltide eelistus'
@@ -275,6 +275,9 @@ Settings:
       External Link Handling: Rakenduseväline lingikäsitlus
       Open Link: Ava link
       Ask Before Opening Link: Küsi enne lingi avamist
+    Auto Load Next Page:
+      Label: Laadi järgmine leht automaatselt
+      Tooltip: Laadi järgmised lehed ja kommentaarid automaatselt.
   Theme Settings:
     Theme Settings: 'Välimuse seadistused'
     Match Top Bar with Main Color: 'Kasuta ülaribal põhivärvi'
@@ -343,7 +346,7 @@ Settings:
     Turn on Subtitles by Default: 'Vaikimisi näita subtiitreid'
     Autoplay Videos: 'Esita videod automaatselt'
     Proxy Videos Through Invidious: 'Puhverda videosid Invidious''e veebiteenuse kaudu'
-    Autoplay Playlists: 'Automaatselt mängi esitusloendit'
+    Autoplay Playlists: 'Mängi esitusloendit automaatselt'
     Enable Theatre Mode by Default: 'Vaikimisi kasuta teatrivaadet (laia vaadet)'
     Default Volume: 'Vaikimisi helivaljus'
     Default Playback Rate: 'Vaikimisi videoesituse kiirus'
@@ -390,8 +393,6 @@ Settings:
     Skip by Scrolling Over Video Player: Jäta vahele, kerides üle videopleieri
     Allow DASH AV1 formats: Luba DASH AV1 vormingud
     Enter Fullscreen on Display Rotate: Ekraani pööramisel ava täisekraanivaade
-    Comment Auto Load:
-      Comment Auto Load: Kommentaaride automaatne laadimine
   Privacy Settings:
     Privacy Settings: 'Privaatsuse seadistused'
     Remember History: 'Jäta ajalugu meelde'
@@ -408,7 +409,6 @@ Settings:
     Are you sure you want to remove all subscriptions and profiles?  This cannot be undone.: 'Kas
       sa oled kindel, et soovid kustutada kõik tellimused/profiilid? Seda tegevust
       ei saa tagasi pöörata.'
-    Automatically Remove Video Meta Files: Automaatselt kustuta videote metateave
     Save Watched Videos With Last Viewed Playlist: Salvesta vaadatud videod viimati
       vaadatud videote esitusloendisse
     All playlists have been removed: Kõik esitusloendid on eemaldatud
@@ -575,7 +575,7 @@ Settings:
     Ignore Default Arguments: Eira vaikimisi käsureaargumente
   Download Settings:
     Download Settings: Allalaadimise seadistused
-    Ask Download Path: Küsi kausta, kuhu soovid faile alla laadida
+    Ask Download Path: Küsi kuhu kausta soovid faile alla laadida
     Choose Path: Vali asukoht
     Download Behavior: Tegevus allalaadimisel
     Open in web browser: Ava veebibrauseris
@@ -602,6 +602,7 @@ Settings:
     Set Password: Määra salasõna
     Set Password To Prevent Access: Vältimaks ligipääsu seadistustele määra salasõna
   Expand All Settings Sections: Laienda kõik seadistuste lõigud
+  Sort Settings Sections (A-Z): Järjesta seadistused (A-Z)
 About:
   #On About page
   About: 'Teave'
@@ -877,7 +878,7 @@ Video:
     Video statistics are not available for legacy videos: Vana tüüpi videote puhul
       pole statistika saataval
     Resolution: Resolutsioon
-  Premieres: Esilinastused
+  Premieres: Esilinastus
   Show Super Chat Comment: Näita Super Chat'i kommentaare
   Scroll to Bottom: Keri alla
   Upcoming: Tulemas
@@ -906,6 +907,15 @@ Playlist:
 #* Published
 #& Views
   Playlist: Esitusloend
+  Sort By:
+    Custom: Kohandatud
+    Sort By: Järjestuse alus
+    DateAddedNewest: Esmalt viimatilisatud
+    DateAddedOldest: Esmalt ammu lisatud
+    AuthorAscending: Autori alusel (A-Z)
+    AuthorDescending: Autori alusel (Z-A)
+    VideoTitleAscending: Pealkirja alusel (A-Z)
+    VideoTitleDescending: Pealkirja alusel (Z-A)
 Toggle Theatre Mode: 'Lülita lai vaade sisse/välja'
 Change Format:
   Change Media Formats: 'Muuda videovorminguid'
@@ -997,7 +1007,7 @@ Tooltips:
       on leitav PATH keskkonnamuutuja alusel. Aga kui vaja, siis saad siin seadistada
       muu asukoha.
     Ignore Warnings: Kui väline meediamängija antud funktsionaalsust (näiteks esitusloendi
-      järjekorra pööramine) ei toeta siis ära näita hoiatusi.
+      järjekorra pööramine) ei toeta, siis ära näita hoiatusi.
     Custom External Player Arguments: Semikoolonitega (;) eraldatud käsurea argumendid,
       mida sa soovid välisele meediamängijale saata.
     External Player: "Seadistades välise meediamängija kuvame pisipildil ikooni video
@@ -1013,9 +1023,6 @@ Tooltips:
       IP-aadressi blokeerimise, kuid ei sisalda video kestust ja otseesituse olekut
     Fetch Automatically: Kui see valik on kasutusel, siis FreeTube automaatselt laadib
       uue akna avamisel ja profiili vahetamisel sinu tellimuste loendi.
-  Privacy Settings:
-    Remove Video Meta Files: Selle valiku kasutamisel FreeTube automaatselt kustutab
-      peale video esitamist kogu metateabe.
   General Settings:
     Region for Trending: Piirkond, mille alusel kuvame hetkel menukad ehk populaarsust
       koguvad videod.
@@ -1127,3 +1134,15 @@ Age Restricted:
   This channel is age restricted: Kanali vaatamisel on vanusepiirang
   This video is age restricted: Video vaatamisel on vanusepiirang
 Close Banner: Sulge rekaampilt
+checkmark: ✓
+Display Label: '{label}: {value}'
+Feed:
+  Feed Last Updated: '{feedName} tellimustevoo viimane uuendus: {date}'
+  Refresh Feed: Uuenda {subscriptionName} andmed
+Moments Ago: hetk tagasi
+Yes, Restart: Jah, käivita uuesti
+Cancel: Katkesta
+Search character limit: Otsingupäring on lubatud {searchCharacterLimit}-tähemärgisest
+  piirist pikem
+Yes, Delete: Jah, kustuta
+Yes, Open Link: Jah, ava link
